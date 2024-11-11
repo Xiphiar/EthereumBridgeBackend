@@ -57,7 +57,7 @@ mongoose
 
 app.use(
   cors({
-    origin: config.appUrl,
+    origin: "*", //config.appUrl,
   })
 );
 

@@ -24,7 +24,7 @@ const config = convict({
   },
   dbName: {
     format: String,
-    default: "",
+    default: "secretswap_backend",
     arg: "dbName",
     env: "MONGODB_NAME",
   },
@@ -36,7 +36,7 @@ const config = convict({
   },
   db: {
     format: String,
-    default: "",
+    default: "mongodb://127.0.0.1:27017",
     arg: "db",
     env: "DB_URL",
   },
@@ -60,7 +60,7 @@ const config = convict({
   },
   secretNodeUrl: {
     format: String,
-    default: "",
+    default: "https://secret.api.trivium.network:1317",
     arg: "secretNodeUrl",
     env: "SECRET_NODE_URL",
   },
