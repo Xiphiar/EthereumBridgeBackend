@@ -25,6 +25,7 @@ import * as cashbackController from "./controllers/cashback_stats";
 import * as votesController from "./controllers/votes";
 
 import config from "./util/config";
+import updateTokens from "./tasks/tokens";
 
 // import Agenda from "agenda";
 
@@ -123,5 +124,9 @@ app.post(
 app.get("/secret_votes/", votesController.getAllVotes);
 app.post("/secret_votes/:voteAddr", votesController.newVote);
 app.post("/secret_votes/finalize/:voteAddr", votesController.finalizeVote);
+
+// Tasks
+updateTokens();
+setInterval(updateTokens, 1800000); // Run every 30 min
 
 export default app;
