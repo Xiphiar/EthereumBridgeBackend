@@ -5,6 +5,8 @@ import {AzureFunction, Context} from "@azure/functions";
 import {MongoClient} from "mongodb";
 import {CosmWasmClient, EnigmaUtils} from "secretjs";
 import fetch from "node-fetch";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const coinGeckoApi = "https://api.coingecko.com/api/v3/simple/price?";
 
@@ -295,3 +297,4 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
 
 
 export default timerTrigger;
+timerTrigger(console as any);

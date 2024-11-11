@@ -3,6 +3,8 @@ import {MongoClient} from "mongodb";
 import {priceFromPoolInScrt} from "./utils";
 import {BroadcastMode, CosmWasmClient, Secp256k1Pen, SigningCosmWasmClient} from "secretjs";
 import fetch from "node-fetch";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const coinGeckoUrl = "https://api.coingecko.com/api/v3/simple/price?";
 
@@ -205,3 +207,5 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
 };
 
 export default timerTrigger;
+
+timerTrigger(console as any);

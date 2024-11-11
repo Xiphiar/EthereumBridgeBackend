@@ -2,6 +2,8 @@ import { AzureFunction, Context } from "@azure/functions";
 import { MongoClient } from "mongodb";
 import Web3 from "web3";
 import fetch from "node-fetch";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const supportedNetworks = ["ethereum", "binancesmartchain"];
 
@@ -269,3 +271,4 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
 };
 
 export default timerTrigger;
+timerTrigger(console as any);

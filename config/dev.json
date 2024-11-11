@@ -1,4 +1,7 @@
 {
   "port": 8000,
-  "appUrl": "http://localhost:3000"
+  "appUrl": "http://localhost:3000",
+  "dbName": "secretswap_backend",
+  "db": "mongodb://127.0.0.1:27017",
+  "secretNodeUrl": "https://secret.api.trivium.network:1317"
 }

@@ -1,4 +1,7 @@
 {
   "port": 8080,
-  "appUrl": "https://bridge.enigma.co"
+  "appUrl": "https://bridge.enigma.co",
+  "dbName": "secretswap_backend",
+  "db": "mongodb://192.168.2.1:27017",
+  "secretNodeUrl": "https://secret.api.trivium.network:1317"
 }

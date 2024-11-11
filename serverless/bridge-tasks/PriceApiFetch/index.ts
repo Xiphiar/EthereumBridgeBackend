@@ -1,6 +1,8 @@
 import { AzureFunction, Context } from "@azure/functions";
 import { MongoClient } from "mongodb";
 import fetch from "node-fetch";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const binanceUrl = "https://api.binance.com/api/v3/ticker/price?";
 const coinGeckoUrl = "https://api.coingecko.com/api/v3/simple/price?";
@@ -290,3 +292,5 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
 };
 
 export default timerTrigger;
+
+timerTrigger(console as any);

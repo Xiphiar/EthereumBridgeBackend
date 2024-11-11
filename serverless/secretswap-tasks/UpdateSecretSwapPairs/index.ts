@@ -1,6 +1,8 @@
 import { AzureFunction, Context } from "@azure/functions";
 import { CosmWasmClient } from "secretjs";
 import { MongoClient } from "mongodb";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const secretNodeURL: string = process.env["secretNodeURL"];
 const mongodbName: string = process.env["mongodbName"];
@@ -73,3 +75,5 @@ const timerTrigger: AzureFunction = async function (
 };
 
 export default timerTrigger;
+
+timerTrigger(console as any)
