@@ -26,6 +26,7 @@ import * as votesController from "./controllers/votes";
 
 import config from "./util/config";
 import updateTokens from "./tasks/tokens";
+import { addManualPairings } from "./tasks/manualPairings";
 
 // import Agenda from "agenda";
 
@@ -128,5 +129,7 @@ app.post("/secret_votes/finalize/:voteAddr", votesController.finalizeVote);
 // Tasks
 updateTokens();
 setInterval(updateTokens, 1800000); // Run every 30 min
+
+addManualPairings();
 
 export default app;
