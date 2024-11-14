@@ -23,5 +23,13 @@ export const addManualPairings = async () => {
         },
     };
 
-    await Pairing.create(newPairing);
+    await Pairing.findOneAndUpdate(
+        {
+            dst_address: "secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek"
+        },
+        newPairing,
+        {
+            upsert: true
+        }
+    );
 };
