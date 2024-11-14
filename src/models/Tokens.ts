@@ -28,6 +28,7 @@ export const tokenSchema = new mongoose.Schema({
     symbol: String,
     usage: Array,
     hidden: Boolean,
+    display_props: {},
 }, { collection: "secret_tokens" });
 
 // userSchema.pre("save", function save(next) {

@@ -22,7 +22,7 @@ const updateTokens = async () => {
     const queryClient = new CosmWasmClient(config.secretNodeUrl);
 
     const pairs = await SecretSwapPairs.find().lean();
-    const existingTokens = (await Tokens.find().lean()).map(token => token.address);
+    const existingTokens = (await Tokens.find().lean()).filter(token => !!token.display_props).map(token => token.address);
 
     const tokenAddresses: string[] = [];
     for (const pair of pairs) {
@@ -60,16 +60,24 @@ const updateTokens = async () => {
             symbol: token_info.symbol,
             // usage: undefined, // ?
             hidden: false,
-
-            // ???
-            // display_props: { 
-            //     symbol: tokenInfo.symbol,
-            //     label: tokenInfo.symbol,
-            // },
+            display_props: { 
+                symbol: token_info.symbol,
+                label: token_info.symbol,
+                hidden: false
+            },
         };
         // console.log(newToken);
 
-        await Tokens.create(newToken);
+        await Tokens.findOneAndUpdate(
+            {
+                address: tokenAddress
+            },
+            newToken,
+            {
+                upsert: true,
+                new: true,
+            }
+        );
     }
 
     
