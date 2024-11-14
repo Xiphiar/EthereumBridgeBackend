@@ -16,6 +16,11 @@ export const addManualPairings = async () => {
         totalLocked: "0",
         totalLockedNormal: "0",
         totalLockedUSD: "0",
+        display_props: { 
+            symbol: "sSCRT",
+            label: "sSCRT",
+            hidden: false
+        },
     };
 
     await Pairing.create(newPairing);
