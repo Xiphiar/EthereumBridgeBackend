@@ -28,6 +28,7 @@ import config from "./util/config";
 import updateTokens from "./tasks/tokens";
 import { addManualPairings } from "./tasks/manualPairings";
 import { updateV2RewardsPools } from "./tasks/v2RewardsPools";
+import { updateV1RewardsPools } from "./tasks/v1RewardsPools";
 
 // import Agenda from "agenda";
 
@@ -134,6 +135,7 @@ app.post("/secret_votes/finalize/:voteAddr", votesController.finalizeVote);
 
   // Startup Updates
   await updateV2RewardsPools();
+  await updateV1RewardsPools();
   await addManualPairings();
 })();
 
