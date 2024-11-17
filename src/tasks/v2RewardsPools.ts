@@ -39,8 +39,10 @@ export const updateV2RewardsPools = async () => {
 
         // contract.address is undefined for some reason, get the address by label
         if (!contract_address) {
-            const { data: { _contract_address }} = await axios.get(`${config.secretNodeUrl}/compute/v1beta1/contract_address/${contract.label}`);
-            contract_address = _contract_address;
+            console.log("Missing contract address, fetching...");
+            const { data } = await axios.get(`${config.secretNodeUrl}/compute/v1beta1/contract_address/${contract.label}`);
+            console.log(data);
+            contract_address = data.contract_address;
         }
 
         const existingDocument = await Rewards.findOne({ pool_address: contract_address }).lean();
