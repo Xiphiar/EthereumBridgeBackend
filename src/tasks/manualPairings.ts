@@ -46,7 +46,29 @@ export const addManualPairings = async () => {
         },
     };
 
-    for (const pairing of [scrtPairing, sefiPairing]) {
+    const ethPairing = {
+        src_network: "ethereum",
+        src_coin: "ETH",
+        src_address: "",
+        dst_network: "secret",
+        dst_coin: "sETH",
+        dst_address: "secret1wuzzjsdhthpvuyeeyhfq2ftsn3mvwf9rxy6ykw",
+        name: "Secret Ethereum",
+        symbol: "sETH",
+        decimals: 6,
+        price: "0",
+        totalLocked: "0",
+        totalLockedNormal: "0",
+        totalLockedUSD: "0",
+        display_props: { 
+            symbol: "sETH",
+            label: "sETH",
+            hidden: false,
+            usage: ["LPSTAKING", "REWARDS", "SWAP"],
+        },
+    };
+
+    for (const pairing of [scrtPairing, sefiPairing, ethPairing]) {
         await Pairing.findOneAndUpdate(
             {
                 dst_address: pairing.dst_address,
