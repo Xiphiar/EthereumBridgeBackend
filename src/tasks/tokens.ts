@@ -2,11 +2,10 @@
 import { TokenDocument, Tokens } from "../models/Tokens";
 import { SecretSwapPairs } from "../models/SecretSwapPair";
 import { ClientSession } from "mongodb";
-import { Document, QueryOptions, Query, UpdateQuery, CallbackError, NativeError, Model, _AllowStringsForIds, LeanDocument, SaveOptions, ToObjectOptions } from "mongoose";
 import { CosmWasmClient } from "secretjs";
 import config from "../util/config";
 
-interface TokenInfoResponse {
+export interface TokenInfoResponse {
     token_info: {
         name: string;
         symbol: string;

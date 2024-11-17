@@ -27,6 +27,7 @@ import * as votesController from "./controllers/votes";
 import config from "./util/config";
 import updateTokens from "./tasks/tokens";
 import { addManualPairings } from "./tasks/manualPairings";
+import { updateV2RewardsPools } from "./tasks/v2RewardsPools";
 
 // import Agenda from "agenda";
 
@@ -126,10 +127,14 @@ app.get("/secret_votes/", votesController.getAllVotes);
 app.post("/secret_votes/:voteAddr", votesController.newVote);
 app.post("/secret_votes/finalize/:voteAddr", votesController.finalizeVote);
 
+(async()=>{
 // Tasks
-updateTokens();
-setInterval(updateTokens, 1800000); // Run every 30 min
+  await updateTokens();
+  setInterval(updateTokens, 1800000); // Run every 30 min
 
-addManualPairings();
+  // Startup Updates
+  await updateV2RewardsPools();
+  await addManualPairings();
+})();
 
 export default app;
