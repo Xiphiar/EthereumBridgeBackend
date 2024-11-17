@@ -129,14 +129,14 @@ app.post("/secret_votes/:voteAddr", votesController.newVote);
 app.post("/secret_votes/finalize/:voteAddr", votesController.finalizeVote);
 
 (async()=>{
-// Tasks
+  // Tasks
   await updateTokens();
   setInterval(updateTokens, 1800000); // Run every 30 min
 
   // Startup Updates
-  await updateV2RewardsPools();
-  await updateV1RewardsPools();
   await addManualPairings();
+  await updateV1RewardsPools();
+  await updateV2RewardsPools();
 })();
 
 export default app;

@@ -69,6 +69,7 @@ export const addManualPairings = async () => {
     };
 
     for (const pairing of [scrtPairing, sefiPairing, ethPairing]) {
+        console.log("Adding Pairing", pairing.name);
         await Pairing.findOneAndUpdate(
             {
                 dst_address: pairing.dst_address,
