@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { TokenDocument, Tokens } from "../models/Tokens";
-import { SecretSwapPairs } from "../models/SecretSwapPair";
+import { TOKEN_USAGE, TokenDocument, Tokens } from "../models/Tokens";
+import { SecretSwapPairs, Token } from "../models/SecretSwapPair";
 import { ClientSession } from "mongodb";
 import { CosmWasmClient } from "secretjs";
 import config from "../util/config";
@@ -57,7 +57,7 @@ const updateTokens = async () => {
             id: tokenAddress, // ?
             price: "0",
             symbol: token_info.symbol,
-            // usage: undefined, // ?
+            usage: ["BRIDGE", "REWARDS", "SWAP"] as TOKEN_USAGE[],
             hidden: false,
             display_props: { 
                 symbol: token_info.symbol,
@@ -67,7 +67,7 @@ const updateTokens = async () => {
         };
         // console.log(newToken);
 
-        await Tokens.findOneAndUpdate(
+        await Tokens.findOneAndReplace(
             {
                 address: tokenAddress
             },
@@ -75,6 +75,64 @@ const updateTokens = async () => {
             {
                 upsert: true,
                 new: true,
+            }
+        );
+    }
+
+
+    // Add LP tokens?
+    for (const pair of pairs) {
+        const lpToken = pair.liquidity_token;
+        if (existingTokens.includes(lpToken)) {
+            console.log("Skipping LP token", lpToken);
+            continue;
+        }
+
+        console.log("Updating LP token", lpToken);
+
+
+        // Query token info
+        const { token_info }: TokenInfoResponse = await queryClient.queryContractSmart(lpToken, { token_info: {}});
+        // console.log("LP Token Info", token_info);
+
+        const asset1Address = (pair.asset_infos[0] as Token).token?.contract_addr;
+        const asset2Address = (pair.asset_infos[1] as Token).token?.contract_addr;
+
+        const asset1 = await Tokens.findOne({ address: asset1Address }).lean();
+        const asset2 = await Tokens.findOne({ address: asset2Address }).lean();
+
+        if (!asset1Address || !asset2Address) {
+            console.error(`Pair ${pair.contract_addr} is missing one or more asset addresses`);
+            continue;
+        }
+
+        const symbol = `LP-${asset1.display_props.symbol}-${asset2.display_props.symbol}`;
+        const newToken = {
+            name: token_info.name,
+            address: lpToken,
+            decimals: token_info.decimals,
+            id: lpToken, // ?
+            price: "0",
+            symbol: symbol,
+            usage: ["LPSTAKING"] as TOKEN_USAGE[],
+            hidden: false,
+            display_props: { 
+                symbol: symbol,
+                label: symbol,
+                hidden: false
+            },
+        };
+
+        await Tokens.findOneAndReplace(
+            {
+                address: lpToken
+            },
+            {
+                ...newToken
+            },
+            {
+                upsert: true,
+                new: true
             }
         );
     }

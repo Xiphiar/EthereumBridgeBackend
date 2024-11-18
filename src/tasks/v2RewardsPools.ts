@@ -1,8 +1,8 @@
 import { CosmWasmClient } from "secretjs";
 import config from "../util/config";
 import { Rewards } from "../models/Rewards";
-import { TokenInfoResponse } from "./tokens";
 import axios from "axios";
+import { Tokens } from "../models/Tokens";
 
 type RewardTokenResponse = {
     reward_token: {
@@ -45,8 +45,19 @@ export const updateV2RewardsPools = async () => {
             contract_address = data.contract_address;
         }
 
+        if (contract_address === "secret18pqz6x67ty6wnjlrcultfcdc5trz2xy5tjglcx") {
+            console.log("Skipping ALTER pool");
+            continue;
+        }
+
         const existingDocument = await Rewards.findOne({ pool_address: contract_address }).lean();
         if (existingDocument) {
+            await Rewards.findOneAndUpdate({
+                pool_address: contract_address
+            }, {
+                deprecated: true,
+                deprecated_by: "f",
+            });
             console.log("Skipping V2 pool", contract.label, contract_address);
             continue;
         }
@@ -55,33 +66,42 @@ export const updateV2RewardsPools = async () => {
 
         const itr: IncentivizedTokenResponse = await queryClient.queryContractSmart(contract_address, { incentivized_token: {} });
         const incentivizedTokenAddress = itr.incentivized_token.token.address;
-        const { token_info: incentivizedTokenInfo }: TokenInfoResponse = await queryClient.queryContractSmart(incentivizedTokenAddress, { token_info: {}});
+        if (!incentivizedTokenAddress) {
+            console.error(`Unable to find iToken address ${incentivizedTokenAddress} for v2 pool ${contract.label}`);
+            continue;
+        }
+        const iToken = await Tokens.findOne({address: incentivizedTokenAddress}).lean();
+        if (!iToken) {
+            console.error(`Unable to find iToken for v2 pool ${contract.label}`);
+            continue;
+        }
 
         const { reward_token: { token: { address: rewardTokenAddress }}}: RewardTokenResponse = await queryClient.queryContractSmart(contract_address, { reward_token: {} });
-        const { token_info: rewardTokenInfo }: TokenInfoResponse = await queryClient.queryContractSmart(rewardTokenAddress, { token_info: {}});
-        
+        const rToken = await Tokens.findOne({address: rewardTokenAddress}).lean();
 
         const newRewardsDocument = {
             "pool_address": contract_address,
             "contract_hash": codeHash,
             "inc_token": {
-                "symbol": incentivizedTokenInfo.symbol,
+                "symbol": iToken.display_props.symbol,
                 "address": incentivizedTokenAddress,
-                "decimals": incentivizedTokenInfo.decimals,
-                "name": incentivizedTokenInfo.name,
+                "decimals": iToken.decimals,
+                "name": iToken.display_props.symbol,
                 "price": "0"
             },
             "rewards_token": {
-                "symbol": rewardTokenInfo.symbol,
+                "symbol": rToken.display_props.symbol,
                 "address": rewardTokenAddress,
-                "decimals": rewardTokenInfo.decimals,
-                "name": rewardTokenInfo.name,
+                "decimals": rToken.decimals,
+                "name": rToken.display_props.symbol,
                 "price": "0"
             },
             "total_locked": "0",
             "pending_rewards": "",
             "deadline": "",
             "hidden": false,
+            deprecated: true,
+            deprecated_by: "f",
         };
 
         await Rewards.create(newRewardsDocument);

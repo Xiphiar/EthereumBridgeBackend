@@ -68,9 +68,32 @@ export const addManualPairings = async () => {
         },
     };
 
-    for (const pairing of [scrtPairing, sefiPairing, ethPairing]) {
+    const usdtPairing = {
+        src_network: "ethereum",
+        src_coin: "USDT",
+        src_address: "",
+        dst_network: "secret",
+        dst_coin: "USDT",
+        dst_address: "secret18wpjn83dayu4meu6wnn29khfkwdxs7kyrz9c8f",
+        name: "Secret USDT",
+        symbol: "USDT",
+        decimals: 6,
+        price: "1",
+        totalLocked: "0",
+        totalLockedNormal: "0",
+        totalLockedUSD: "0",
+        display_props: { 
+            symbol: "USDT",
+            label: "USDT",
+            hidden: false,
+            usage: ["LPSTAKING", "REWARDS", "SWAP"],
+        },
+    };
+    
+
+    for (const pairing of [scrtPairing, sefiPairing, ethPairing, usdtPairing]) {
         console.log("Adding Pairing", pairing.name);
-        await Pairing.findOneAndUpdate(
+        await Pairing.findOneAndReplace(
             {
                 dst_address: pairing.dst_address,
             },

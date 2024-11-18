@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import mongoose from "mongoose";
 
-type TOKEN_USAGE = "BRIDGE" | "REWARDS" | "LPSTAKING";
+export type TOKEN_USAGE = "BRIDGE" | "REWARDS" | "LPSTAKING" | "SWAP";
+
+export type DisplayProps = {
+    symbol: string;
+    label: string;
+    hidden: boolean;
+}
 
 
 export interface TokenDocument extends mongoose.Document {
@@ -12,7 +18,7 @@ export interface TokenDocument extends mongoose.Document {
     usage: TOKEN_USAGE[];
     id: string;
     hidden: boolean;
-    display_props: object;
+    display_props: DisplayProps;
 }
 
 

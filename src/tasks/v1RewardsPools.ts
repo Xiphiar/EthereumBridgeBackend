@@ -1,8 +1,8 @@
 import { CosmWasmClient } from "secretjs";
 import config from "../util/config";
 import { Rewards } from "../models/Rewards";
-import { TokenInfoResponse } from "./tokens";
 import axios from "axios";
+import { Tokens } from "../models/Tokens";
 
 type RewardTokenResponse = {
     reward_token: {
@@ -55,33 +55,34 @@ export const updateV1RewardsPools = async () => {
 
         const itr: IncentivizedTokenResponse = await queryClient.queryContractSmart(contract_address, { incentivized_token: {} });
         const incentivizedTokenAddress = itr.incentivized_token.token.address;
-        const { token_info: incentivizedTokenInfo }: TokenInfoResponse = await queryClient.queryContractSmart(incentivizedTokenAddress, { token_info: {}});
+        const iToken = await Tokens.findOne({address: incentivizedTokenAddress}).lean();
 
         const { reward_token: { token: { address: rewardTokenAddress }}}: RewardTokenResponse = await queryClient.queryContractSmart(contract_address, { reward_token: {} });
-        const { token_info: rewardTokenInfo }: TokenInfoResponse = await queryClient.queryContractSmart(rewardTokenAddress, { token_info: {}});
-        
+        const rToken = await Tokens.findOne({address: rewardTokenAddress}).lean();
 
         const newRewardsDocument = {
             "pool_address": contract_address,
             "contract_hash": codeHash,
             "inc_token": {
-                "symbol": incentivizedTokenInfo.symbol,
+                "symbol": iToken.display_props.symbol,
                 "address": incentivizedTokenAddress,
-                "decimals": incentivizedTokenInfo.decimals,
-                "name": incentivizedTokenInfo.name,
+                "decimals": iToken.decimals,
+                "name": iToken.display_props.symbol,
                 "price": "0"
             },
             "rewards_token": {
-                "symbol": rewardTokenInfo.symbol,
+                "symbol": rToken.display_props.symbol,
                 "address": rewardTokenAddress,
-                "decimals": rewardTokenInfo.decimals,
-                "name": rewardTokenInfo.name,
+                "decimals": rToken.decimals,
+                "name": rToken.display_props.symbol,
                 "price": "0"
             },
             "total_locked": "0",
             "pending_rewards": "",
             "deadline": "",
             "hidden": false,
+            deprecated: true,
+            deprecated_by: "f",
         };
 
         await Rewards.create(newRewardsDocument);

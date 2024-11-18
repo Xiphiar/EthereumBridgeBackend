@@ -137,6 +137,8 @@ app.post("/secret_votes/finalize/:voteAddr", votesController.finalizeVote);
   await addManualPairings();
   await updateV1RewardsPools();
   await updateV2RewardsPools();
+
+  console.log("Startup tasks finished");
 })();
 
 export default app;

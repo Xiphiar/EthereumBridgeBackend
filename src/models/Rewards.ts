@@ -16,6 +16,8 @@ export interface RewardsDocument extends mongoose.Document {
     total_locked: string;
     pending_rewards: string;
     deadline: string;
+    deprecated?: boolean;
+    deprecated_by?: string;
 }
 
 export const rewardsSchema = new mongoose.Schema({
@@ -39,6 +41,8 @@ export const rewardsSchema = new mongoose.Schema({
     pending_rewards: String,
     deadline: String,
     hidden: Boolean,
+    deprecated: Boolean,
+    deprecated_by: String,
 }, { collection: "rewards_data" });
 
 export const Rewards = mongoose.model<RewardsDocument>("rewards", rewardsSchema);
