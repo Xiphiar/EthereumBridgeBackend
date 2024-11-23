@@ -11,9 +11,10 @@ const cache = Cache.getInstance();
 // import logger from "../util/logger";
 
 export const getTokenPairings = async (req: Request, res: Response) => {
-    const pairs: PairingDocument[] = await cache.get("pairs", async () => {
-        return Pairing.find({}, {_id: false});
-    });
+    // const pairs: PairingDocument[] = await cache.get("pairs", async () => {
+        const pairs = await Pairing.find({}, {_id: false});
+        // return pairs;
+    // });
 
     try {
         res.json( { tokens: pairs });

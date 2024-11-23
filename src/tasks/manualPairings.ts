@@ -1,10 +1,11 @@
+import { Tokens } from "../models/Tokens";
 import { Pairing } from "../models/Pairing";
 
 /* eslint-disable @typescript-eslint/camelcase */
 export const addManualPairings = async () => {
     const scrtPairing = {
         src_network: "ethereum",
-        src_coin: "wSCRT",
+        src_coin: "SCRT",
         src_address: "0x2b89bf8ba858cd2fcee1fada378d5cd6936968be",
         dst_network: "secret",
         dst_coin: "sSCRT",
@@ -102,5 +103,9 @@ export const addManualPairings = async () => {
                 upsert: true,
             }
         );
+
+        await Tokens.findOneAndDelete({
+            address: pairing.dst_address,
+        });
     }
 };

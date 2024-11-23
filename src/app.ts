@@ -128,17 +128,17 @@ app.get("/secret_votes/", votesController.getAllVotes);
 app.post("/secret_votes/:voteAddr", votesController.newVote);
 app.post("/secret_votes/finalize/:voteAddr", votesController.finalizeVote);
 
-(async()=>{
-  // Tasks
-  await updateTokens();
-  setInterval(updateTokens, 1800000); // Run every 30 min
+// (async()=>{
+//   // Tasks
+//   await updateTokens();
+//   setInterval(updateTokens, 1800000); // Run every 30 min
 
-  // Startup Updates
-  await addManualPairings();
-  await updateV1RewardsPools();
-  await updateV2RewardsPools();
+//   // Startup Updates
+//   await addManualPairings();
+//   await updateV1RewardsPools();
+//   await updateV2RewardsPools();
 
-  console.log("Startup tasks finished");
-})();
+//   console.log("Startup tasks finished");
+// })();
 
 export default app;

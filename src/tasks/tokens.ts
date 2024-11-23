@@ -4,6 +4,7 @@ import { SecretSwapPairs, Token } from "../models/SecretSwapPair";
 import { ClientSession } from "mongodb";
 import { CosmWasmClient } from "secretjs";
 import config from "../util/config";
+import { Pairing } from "../models/Pairing";
 
 export interface TokenInfoResponse {
     token_info: {
@@ -38,10 +39,10 @@ const updateTokens = async () => {
     console.log(`Found ${tokenAddresses.length} tokens.`);
 
     for (const tokenAddress of tokenAddresses) {
-        if (existingTokens.includes(tokenAddress)) {
-            console.log("Skipping token", tokenAddress);
-            continue;
-        }
+        // if (existingTokens.includes(tokenAddress)) {
+        //     console.log("Skipping token", tokenAddress);
+        //     continue;
+        // }
 
         console.log("Updating token", tokenAddress);
 
@@ -50,18 +51,22 @@ const updateTokens = async () => {
         const { token_info }: TokenInfoResponse = await queryClient.queryContractSmart(tokenAddress, { token_info: {}});
         // console.log("Token Info", token_info);
 
+        let symbol = token_info.symbol;
+        if (symbol.startsWith("s") && !symbol.startsWith("stkd")) symbol = symbol.substring(1);
+        if (symbol.endsWith("(BSC)")) symbol = symbol.substring(1);
+        if (symbol.startsWith("S") && token_info.name !== "Secret Finance" && symbol !== "SIENNA" && symbol !== "SSCRT") symbol = symbol.substring(1);
         const newToken = {
             name: token_info.name,
             address: tokenAddress,
             decimals: token_info.decimals,
             id: tokenAddress, // ?
             price: "0",
-            symbol: token_info.symbol,
+            symbol: symbol,
             usage: ["BRIDGE", "REWARDS", "SWAP"] as TOKEN_USAGE[],
             hidden: false,
             display_props: { 
-                symbol: token_info.symbol,
-                label: token_info.symbol,
+                symbol: symbol,
+                label: symbol,
                 hidden: false
             },
         };
@@ -75,6 +80,37 @@ const updateTokens = async () => {
             {
                 upsert: true,
                 new: true,
+            }
+        );
+
+        const newPairing = {
+            src_network: "secret",
+            src_coin: symbol,
+            src_address: tokenAddress,
+            dst_network: "secret",
+            dst_coin: symbol,
+            dst_address: tokenAddress,
+            name: token_info.name,
+            symbol: symbol,
+            decimals: token_info.decimals,
+            price: "0",
+            totalLocked: "0",
+            totalLockedNormal: "0",
+            totalLockedUSD: "0",
+            display_props: { 
+                symbol: symbol,
+                label: symbol,
+                hidden: false,
+                usage: ["LPSTAKING", "REWARDS", "SWAP"],
+            },
+        };
+        await Pairing.findOneAndReplace(
+            {
+                dst_address: newPairing.dst_address,
+            },
+            newPairing,
+            {
+                upsert: true,
             }
         );
     }
